@@ -15,12 +15,12 @@ import argparse
 import logging
 import sys
 
-from . import __version__
-from .config import ConfigError, from_env
-from .contract import ContractError, load
-from .ledger import Ledger
-from .pipeline import Pipeline
-from .sink import IcebergSink, SinkError
+from config import ConfigError, from_env
+from contract import ContractError, load
+from ledger import Ledger
+from pipeline import Pipeline
+from sink import IcebergSink, SinkError
+from version import __version__
 
 
 def _logging(verbose: bool) -> None:

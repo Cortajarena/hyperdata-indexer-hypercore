@@ -32,11 +32,11 @@ from dataclasses import dataclass, field
 import orjson
 import pyarrow as pa
 
-from .buffer import RowBuffer
-from .config import Config
-from .contract import Contract
-from .ledger import FileRecord, Ledger
-from .normalise import ContractViolation, block_info_row, rows_from_line
+from buffer import RowBuffer
+from config import Config
+from contract import Contract
+from ledger import FileRecord, Ledger
+from normalise import ContractViolation, block_info_row, rows_from_line
 
 log = logging.getLogger(__name__)
 

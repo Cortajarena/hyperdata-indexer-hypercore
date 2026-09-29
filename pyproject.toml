@@ -12,8 +12,13 @@ dynamic = ["dependencies"]
 [tool.setuptools.dynamic]
 dependencies = { file = ["requirements.txt"] }
 
-[tool.setuptools.packages.find]
-where = ["src"]
+# src/ is the source root and its modules are top level (no package wrapper),
+# so they are declared as py-modules and imported by name.
+[tool.setuptools]
+py-modules = [
+  "buffer", "cli", "config", "contract", "ledger", "normalise", "pipeline",
+  "sink", "version",
+]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]

@@ -16,7 +16,7 @@ from conftest import (
     order,
     order_status,
 )
-from hypercore_indexer.normalise import (
+from normalise import (
     MAX_ORDER_DEPTH,
     ContractViolation,
     parse_line,

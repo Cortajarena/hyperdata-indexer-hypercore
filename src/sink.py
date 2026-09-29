@@ -27,7 +27,7 @@ import pyarrow as pa
 from pyiceberg.catalog import Catalog, load_catalog
 from pyiceberg.exceptions import NoSuchTableError
 
-from .config import Config
+from config import Config
 
 log = logging.getLogger(__name__)
 

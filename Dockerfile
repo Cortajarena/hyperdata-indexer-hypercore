@@ -43,5 +43,5 @@ ENV PYTHONPATH=/app/src \
     DLQ_DIR=/state/dlq \
     SCHEMA_DIR=/schemas/generated/arrow
 
-ENTRYPOINT ["python", "-m", "hypercore_indexer"]
+ENTRYPOINT ["python", "src/__main__.py"]
 CMD ["run"]

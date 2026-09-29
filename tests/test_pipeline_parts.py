@@ -7,11 +7,11 @@ import datetime as dt
 import pyarrow as pa
 import pytest
 
+from buffer import RowBuffer, weigh
 from conftest import envelope, fill, line, order, order_status
-from hypercore_indexer.buffer import RowBuffer, weigh
-from hypercore_indexer.contract import IDENTITY_FIELDS, ContractError, load
-from hypercore_indexer.ledger import FileRecord, Ledger
-from hypercore_indexer.normalise import rows_from_line
+from contract import IDENTITY_FIELDS, ContractError, load
+from ledger import FileRecord, Ledger
+from normalise import rows_from_line
 
 INGEST_TS = dt.datetime(2026, 9, 29, 12, 0, 0)
 
@@ -144,7 +144,7 @@ def test_ledger_ignores_blank_lines(tmp_path):
 
 
 def test_ledger_rejects_corrupt_lines(tmp_path):
-    from hypercore_indexer.ledger import LedgerError
+    from ledger import LedgerError
 
     path = tmp_path / "l.jsonl"
     path.write_text("{not json}\n")
