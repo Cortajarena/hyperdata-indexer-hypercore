@@ -117,3 +117,26 @@ v0.1.0: batch ingestion of sealed hour-files, with the file ledger, the dead-let
 `block_info` block boundaries. Not yet: live tailing of the current hour file (it needs byte-offset
 resume from the ledger rather than whole-file hashing), Prometheus metrics, and the
 snapshot-aligned segment mode shared with the Flink backfill path.
+
+## TODO — CI and build
+
+`.github/workflows/ci.yml` is a **mockup**: lint + tests, not wired into the platform's CI and not
+required to pass. What it would take to make it real:
+
+- [ ] **Pin the contract.** The test job checks the platform repo out on a moving ref (`main`),
+      because the generated schemas are committed there. Pin a tag or a contract version so this
+      repo's tests cannot change without a commit here — needs contract versioning in the platform
+      repo first.
+- [ ] **Actually run it.** The workflow has never executed; its two commands are the ones verified
+      locally in the image. A first real run is what proves the `pyarrow`/`pyiceberg` install and the
+      contract mount on a clean runner.
+- [ ] **Publish the image.** The ingest DAG currently runs `docker build` on every task because
+      there is no registry to pull from. Publishing means: tag on release, push to GHCR, and have
+      the DAG pull a digest instead of building — which also frees it from the source checkout.
+- [ ] **Cut the CI cost.** The `test` image is ~1 GB (pyarrow + pyiceberg). Splitting the suite —
+      unit tests needing neither, contract tests needing both — would let the cheap half skip it.
+- [ ] **Add the integration test.** Nothing yet proves a row reaches Iceberg. The missing test brings
+      up the `warehouse` profile (iceberg-catalog + minio), ingests one hour-file, and asserts the
+      row counts plus the ledger's no-op on re-run. It is what would catch a contract that generates
+      cleanly but that pyiceberg will not accept.
+- [ ] **Coverage and a pre-commit hook**, once there is behaviour worth measuring.

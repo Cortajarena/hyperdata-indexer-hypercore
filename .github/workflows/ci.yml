@@ -1,0 +1,71 @@
+# MOCKUP — not wired into the platform's CI, and not required to pass yet.
+#
+# Two jobs, deliberately the same two commands a developer runs locally:
+#   lint   ruff, at the repo's 90-char limit
+#   test   the `test` image target, with the generated contract mounted
+#
+# The dependency worth noticing: the row contract does not live in this repo.
+# It is generated from platform/schemas in the platform monorepo and mounted at
+# /schemas/generated/arrow, so the test job checks the platform repo out
+# alongside. That is also the honest signal of what this service depends on.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install linter
+        run: pip install ruff==0.16.9
+      - name: Ruff
+        run: ruff check --line-length 90 .
+
+  test:
+    runs-on: ubuntu-latest
+      # TODO(cost): the test image is ~1 GB because it carries pyarrow and
+      # pyiceberg. Building it on every run is the price of testing the real
+      # dependency set; a prebuilt base image or a matrix that splits unit
+      # tests (no pyarrow) from contract tests (needs it) would cut it.
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check out the schema contract
+        uses: actions/checkout@v4
+        with:
+          # TODO(pin): track a tag or a contract version, not `main`. The
+          # generated schemas are committed, so a moving ref means this repo's
+          # tests can change without a commit here. Needs contract versioning
+          # in the platform repo first.
+          repository: Cortajarena/hyperdata-platform
+          ref: main
+          path: platform
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build the test image
+        run: docker build --target test -t hypercore-indexer:test .
+
+      - name: Run the tests
+        run: |
+          docker run --rm \
+            -v "$PWD/platform/platform/schemas/generated/arrow:/schemas/generated/arrow:ro" \
+            hypercore-indexer:test
+
+      # TODO(integration): nothing here proves a row reaches Iceberg. The
+      # warehouse profile (iceberg-catalog + minio) plus a smoke run over one
+      # hour-file is the missing test — it is what would catch a contract that
+      # generates cleanly but does not match what pyiceberg will accept.
