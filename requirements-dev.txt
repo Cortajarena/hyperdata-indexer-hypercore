@@ -1,0 +1,9 @@
+# Development dependencies (not installed in the runtime image).
+#
+# grpcio-tools ships protoc, so `make schemas` and the schema tests need no
+# system protobuf compiler. `buf` is preferred when present.
+-r requirements.txt
+
+pytest==9.1.1
+ruff==0.16.9
+grpcio-tools==1.84.0

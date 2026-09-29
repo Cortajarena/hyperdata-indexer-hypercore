@@ -1,0 +1,15 @@
+# Runtime dependencies, pinned exactly: this image is the ingestion path, and a
+# silent Arrow/pyiceberg bump is a silent change to what lands in the warehouse.
+#
+# pyarrow  — the row format. Schemas are GENERATED (platform/schemas), not
+#            hand-written; the version must match the generated modules'
+#            expectations (pa.schema/pa.struct/pa.list_).
+# pyiceberg — REST catalog client + append/overwrite against the lakehouse.
+# s3fs      — required by pyiceberg's fsspec FileIO for S3-compatible storage
+#            (MinIO in dev, S3/GCS in prod). Not pulled in by pyiceberg itself.
+# orjson    — JSONL parsing on the hot path: ~335k lines/s/core measured on the
+#            Jun-10 book-diffs file, versus stdlib json an order slower.
+pyarrow==25.0.1
+pyiceberg==0.12.0
+s3fs==2026.9.0
+orjson==3.12.0

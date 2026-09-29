@@ -1,0 +1,13 @@
+# Build noise only. What lands in the image is decided by the Dockerfile's COPY
+# lines, not here — excluding tests/ broke the `test` stage.
+.git
+.gitignore
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+.venv/
+.env
